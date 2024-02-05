@@ -26,12 +26,12 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<StudentAtCourse> allStudentsFromCourse(Course course) {
         return studentAtCourseDAO.allStudentsFromCourse(
-                courseDAO.getItemByID(course.getId())
-                        .orElseThrow(() -> new InvalidIdException("No founded course by given ID: " + course.getId())));
+                courseDAO.findById(course.getId()).orElseThrow(() ->
+                        new InvalidIdException("No founded course by given ID: " + course.getId())));
     }
 
     @Override
     public List<Course> getAllCourses() {
-        return courseDAO.getAll();
+        return courseDAO.findAll();
     }
 }

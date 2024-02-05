@@ -21,11 +21,11 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<CounterStudentsAtGroup> counterStudentsAtGroups(Integer requestedAmountOfStudent) {
-        return groupDAO.counterStudentsAtGroups(requestedAmountOfStudent);
+        return groupDAO.counterStudentsAtGroups(requestedAmountOfStudent.longValue());
     }
 
     @Override
     public List<Group> getAllGroups() {
-        return groupDAO.getAll();
+        return groupDAO.findAll();
     }
 }
