@@ -1,6 +1,9 @@
 package ua.foxminded.javaspring.consoleMenu.dao;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ua.foxminded.javaspring.consoleMenu.model.Course;
 
-public interface CourseDAO extends DAO<Course, Long> {
+@Repository
+public interface CourseDAO extends JpaRepository<Course, Long> {
 }

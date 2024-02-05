@@ -1,12 +1,12 @@
 package ua.foxminded.javaspring.consoleMenu.dao;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ua.foxminded.javaspring.consoleMenu.model.Student;
 import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
 
 import java.util.List;
 
-public interface StudentDAO extends DAO<Student, Long> {
-    List<StudentAtCourse> studentCourses(Student student);
-
-    boolean removeStudent(Student student);
+@Repository
+public interface StudentDAO extends JpaRepository<Student, Long> {
 }
