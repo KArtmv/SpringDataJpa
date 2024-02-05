@@ -8,13 +8,13 @@ import java.util.List;
 
 @Service
 public interface StudentService {
-    boolean addNewStudent(Student student);
+    Student addNewStudent(Student student);
 
-    boolean deleteStudent(Student student);
+    void deleteStudent(Student student);
 
-    boolean addStudentToCourse(StudentAtCourse studentAtCourse);
+    StudentAtCourse addStudentToCourse(StudentAtCourse studentAtCourse);
 
-    boolean removeStudentFromCourse(StudentAtCourse studentAtCourse);
+    void removeStudentFromCourse(StudentAtCourse studentAtCourse);
 
     Student getStudent(Student student);
 
