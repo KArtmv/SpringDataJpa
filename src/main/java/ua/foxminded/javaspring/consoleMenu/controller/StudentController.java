@@ -36,7 +36,7 @@ public class StudentController {
     public void addNewStudent() {
         LOGGER.info("Run method: addNewStudent");
         try {
-            if (studentService.addNewStudent(inputHandler.getDataOfNewStudent())) {
+            if (studentService.addNewStudent(inputHandler.getDataOfNewStudent()) != null) {
                 consolePrinter.print(messages.printStudentAddedSuccess);
                 LOGGER.debug("Student is added.");
             }
@@ -52,7 +52,8 @@ public class StudentController {
             Student student = inputHandler.getStudent();
             LOGGER.debug("Received student ID: {}", student.getId());
 
-            if (inputHandler.verifyValidStudent(student) && studentService.deleteStudent(student)) {
+            if (inputHandler.verifyValidStudent(student)) {
+                studentService.deleteStudent(student);
                 consolePrinter.print(messages.printStudentRemovedSuccess);
                 LOGGER.debug("Student is removed.");
             }
@@ -74,7 +75,7 @@ public class StudentController {
                 StudentAtCourse studentAtCourse = new StudentAtCourse(student, inputHandler.getCourse());
                 LOGGER.debug("Received course Id: {}", studentAtCourse.getCourse().getId());
 
-                if (studentService.addStudentToCourse(studentAtCourse)) {
+                if (studentService.addStudentToCourse(studentAtCourse) != null) {
                     consolePrinter.print(messages.printStudentAddedToCourseSuccess);
                     LOGGER.debug("Student added to course.");
                 }
@@ -99,11 +100,9 @@ public class StudentController {
                 enrollmentID.setStudent(student);
 
                 LOGGER.debug("Received enrollment id: {}.", enrollmentID.getId());
-
-                if (studentService.removeStudentFromCourse(enrollmentID)) {
+                    studentService.removeStudentFromCourse(enrollmentID);
                     consolePrinter.print(messages.printStudentRemovedFromCourseSuccess);
                     LOGGER.debug("Student removed from course.");
-                }
             } else {
                 consolePrinter.print(messages.printStudentNotEnrolledInAnyCourse);
                 LOGGER.debug("Student has not any course.");
