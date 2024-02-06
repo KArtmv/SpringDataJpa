@@ -32,29 +32,18 @@ class CourseRepoTest {
     @Sql(statements = "INSERT INTO courses (course_name, course_description) values ('Introduction to Psychology', 'Learn the basics of psychology')")
     void getById_shouldReturnCourse_whenGivenIdIsExist() {
         Course course = testData.getCourse();
-        assertThat(courseDAO.getItemByID(course.getId()).get()).usingRecursiveComparison().isEqualTo(course);
+        assertThat(courseDAO.findById(course.getId()).get()).usingRecursiveComparison().isEqualTo(course);
     }
 
     @Test
-    void getById_shouldReturnOptionalEmpty_whenGivenIdIsNotExist() {
+    void findById_shouldReturnOptionalEmpty_whenGivenIdIsNotExist() {
         Course course = testData.getCourse();
-        assertThat(courseDAO.getItemByID(course.getId())).isNotPresent();
+        assertThat(courseDAO.findById(course.getId())).isNotPresent();
     }
 
     @Test
-    void getAll_shouldReturnListOfAvailableCourses_whenItRequest() {
-        assertThat(courseDAO.getAll()).hasSize(3);
-    }
-
-    @Test
-    void addItem_shouldSaveInDatabaseNewCourse_whenItRun() {
-        assertAll(() -> {
-            assertThat(courseDAO.addItem(new Course(testData.courseName, testData.courseDescription))).isTrue();
-
-            List<Course> courses = courseDAO.getAll();
-            assertThat(courses).hasSize(4);
-            assertThat(courses.get(3)).usingRecursiveComparison().isEqualTo(testData.getCourse());
-        });
+    void findAll_shouldReturnListOfAvailableCourses_whenItRequest() {
+        assertThat(courseDAO.findAll()).hasSize(3);
     }
 }
 

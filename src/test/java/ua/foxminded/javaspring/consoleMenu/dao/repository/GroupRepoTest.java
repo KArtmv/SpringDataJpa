@@ -12,8 +12,7 @@ import ua.foxminded.javaspring.consoleMenu.TestData;
 import ua.foxminded.javaspring.consoleMenu.dao.GroupDAO;
 import ua.foxminded.javaspring.consoleMenu.model.Group;
 
-import java.util.List;
-
+import static org.assertj.core.api.Assertions.anyOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -30,32 +29,25 @@ class GroupRepoTest {
     @Test
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     @Sql(statements = "INSERT INTO groups (group_name) values ('YS-28')")
-    void getById_shouldReturnGroup_whenGivenIdIsExist() {
+    void findById_shouldReturnGroup_whenGivenIdIsExist() {
         Group group = testData.getGroup();
-        assertThat(groupDAO.getItemByID(group.getId()).get()).usingRecursiveComparison().isEqualTo(group);
+        assertThat(groupDAO.findById(group.getId()).get()).usingRecursiveComparison().isEqualTo(group);
     }
 
     @Test
-    void getById_shouldReturnOptionalEmpty_whenGivenIdIsNotExist() {
+    void findById_shouldReturnOptionalEmpty_whenGivenIdIsNotExist() {
         Group group = testData.getGroup();
-        assertThat(groupDAO.getItemByID(group.getId())).isNotPresent();
+        assertThat(groupDAO.findById(group.getId())).isNotPresent();
     }
 
     @Test
-    void getAll_shouldReturnListOfAvailableGroups_whenItRequest() {
-        assertThat(groupDAO.getAll()).hasSize(3);
+    void findAll_shouldReturnListOfAvailableGroups_whenItRequest() {
+        assertThat(groupDAO.findAll()).hasSize(3);
     }
 
     @Test
-    void addItem_shouldSaveInDatabaseNewGroup_whenItRun() {
-        Group group = new Group(testData.groupName);
-
-        assertAll(() -> {
-            assertThat(groupDAO.addItem(group)).isTrue();
-
-            List<Group> groups = groupDAO.getAll();
-            assertThat(groups).hasSize(4);
-            assertThat(groups.get(3)).usingRecursiveComparison().isEqualTo(testData.getGroup());
-        });
+    @Sql({"/sql/course/studentAndGroupTable.sql", "/sql/course/StudentAtGroupData.sql"})
+    void counterStudentsAtGroups_shouldReturnListOfAmountStudentsByGroups_whenIsRun(){
+        assertThat(groupDAO.counterStudentsAtGroups(6L)).usingRecursiveComparison().isEqualTo(testData.getStudentsAtGroupList());
     }
 }

@@ -30,46 +30,39 @@ class StudentRepoTest {
     @Test
     @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     @Sql(statements = "INSERT INTO students (first_name, last_name, group_id) values ('Ava', 'Rodriguez', 1)")
-    void getById_shouldReturnStudent_whenIdIsExist() {
+    void findById_shouldReturnStudent_whenIdIsExist() {
         Student student = testData.getStudent();
 
-        assertThat(studentDAO.getItemByID(student.getId()).get()).usingRecursiveComparison()
+        assertThat(studentDAO.findById(student.getId()).get()).usingRecursiveComparison()
                 .isEqualTo(student);
     }
 
     @Test
-    void getById_shouldReturnEmptyOptional_whenIdIsNotExist() {
+    void findById_shouldReturnEmptyOptional_whenIdIsNotExist() {
         Student student = testData.getStudent();
 
-        assertThat(studentDAO.getItemByID(student.getId())).isNotPresent();
+        assertThat(studentDAO.findById(student.getId())).isNotPresent();
     }
 
     @Test
-    void addItem_shouldSuccessfullySaveNewStudent_whenIsRun() {
+    void save_shouldSuccessfullySaveNewStudent_whenIsRun() {
         assertAll(() -> {
-            assertThat(studentDAO.addItem(new Student(testData.studentFirstName, testData.studentLastName, instance.getGroup()))).isTrue();
+            assertThat(studentDAO.save(new Student(testData.studentFirstName, testData.studentLastName, instance.getGroup()))
+                    .getId()).isNotNull();
 
             Student student = testData.getStudent();
-            assertThat(studentDAO.getItemByID(student.getId()).get()).usingRecursiveComparison().isEqualTo(student);
+            assertThat(studentDAO.findById(student.getId()).get()).usingRecursiveComparison().isEqualTo(student);
         });
     }
 
     @Test
-    void removeStudent_shouldSuccessfullyRemoveStudent_whenItRun() {
+    void delete_shouldSuccessfullyRemoveStudent_whenItRun() {
         Student student = instance.getStudent();
 
         assertAll(() -> {
-            assertThat(studentDAO.getItemByID(student.getId())).isPresent();
-            assertThat(studentDAO.removeStudent(student)).isTrue();
-            assertThat(studentDAO.getItemByID(student.getId())).isNotPresent();
+            assertThat(studentDAO.findById(student.getId())).isPresent();
+            studentDAO.delete(student);
+            assertThat(studentDAO.findById(student.getId())).isNotPresent();
         });
-    }
-
-    @Test
-    @SqlMergeMode(SqlMergeMode.MergeMode.OVERRIDE)
-    @Sql({"/sql/studentAtCourse/tables.sql", "/sql/studentAtCourse/data.sql"})
-    @Sql(statements = "INSERT INTO studenttocourse (student_id, course_id) values (5, 1)")
-    void studentCourses_shouldReturnListCoursesRelateToStudent_whenItRun() {
-        assertThat(studentDAO.studentCourses(instance.getStudent())).hasSize(2);
     }
 }
