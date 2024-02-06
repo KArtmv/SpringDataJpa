@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,23 +40,23 @@ class GroupServiceImplTest {
 
         int countStudentsAtGroup = 22;
 
-        when(groupDAO.counterStudentsAtGroups(anyInt())).thenReturn(counterStudentsAtGroup);
+        when(groupDAO.counterStudentsAtGroups(anyLong())).thenReturn(counterStudentsAtGroup);
 
         List<CounterStudentsAtGroup> result = groupService.counterStudentsAtGroups(countStudentsAtGroup);
 
         assertThat(result).usingRecursiveComparison().isSameAs(counterStudentsAtGroup);
 
-        verify(groupDAO).counterStudentsAtGroups(anyInt());
+        verify(groupDAO).counterStudentsAtGroups((long) countStudentsAtGroup);
     }
 
     @Test
     void getAllGroups_shouldReturnListAvailableGroups_whenInvoke() {
         List<Group> groups = new DataInitializer().groupsListInit();
 
-        when(groupDAO.getAll()).thenReturn(groups);
+        when(groupDAO.findAll()).thenReturn(groups);
 
         assertThat(groupService.getAllGroups()).isSameAs(groups);
 
-        verify(groupDAO).getAll();
+        verify(groupDAO).findAll();
     }
 }

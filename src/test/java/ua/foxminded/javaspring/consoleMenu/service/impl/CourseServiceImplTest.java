@@ -47,33 +47,33 @@ class CourseServiceImplTest {
         expect.add(new StudentAtCourse(new Student("firstName2", "lastName2"), course));
         expect.add(new StudentAtCourse(new Student("firstName3", "lastName3"), course));
 
-        when(courseDAO.getItemByID(anyLong())).thenReturn(Optional.of(course));
+        when(courseDAO.findById(anyLong())).thenReturn(Optional.of(course));
         when(studentAtCourseDAO.allStudentsFromCourse(course)).thenReturn(expect);
 
         assertThat(courseService.allStudentsFromCourse(course)).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(expect);
 
-        verify(courseDAO).getItemByID(course.getId());
+        verify(courseDAO).findById(course.getId());
         verify(studentAtCourseDAO).allStudentsFromCourse(course);
     }
 
     @Test
     void allStudentsFromCourse_shouldThrowsException_whenCourseIDIsNotExist() {
-        when(courseDAO.getItemByID(anyLong())).thenReturn(Optional.empty());
+        when(courseDAO.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(InvalidIdException.class, () ->
                 courseService.allStudentsFromCourse(course));
 
-        verify(courseDAO).getItemByID(course.getId());
+        verify(courseDAO).findById(course.getId());
     }
 
     @Test
     void getAllCourses_shouldReturnListOfCourses_whenRequest() {
         List<Course> courses = new DataInitializer().coursesListInit();
 
-        when(courseDAO.getAll()).thenReturn(courses);
+        when(courseDAO.findAll()).thenReturn(courses);
 
         assertThat(courseService.getAllCourses()).isEqualTo(courses);
 
-        verify(courseDAO).getAll();
+        verify(courseDAO).findAll();
     }
 }
