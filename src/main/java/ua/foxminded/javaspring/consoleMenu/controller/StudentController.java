@@ -36,7 +36,7 @@ public class StudentController {
     public void addNewStudent() {
         LOGGER.info("Run method: addNewStudent");
         try {
-            if (studentService.addNewStudent(inputHandler.getDataOfNewStudent()) != null) {
+            if (studentService.addNewStudent(inputHandler.getDataOfNewStudent())) {
                 consolePrinter.print(messages.printStudentAddedSuccess);
                 LOGGER.debug("Student is added.");
             }
@@ -75,7 +75,7 @@ public class StudentController {
                 StudentAtCourse studentAtCourse = new StudentAtCourse(student, inputHandler.getCourse());
                 LOGGER.debug("Received course Id: {}", studentAtCourse.getCourse().getId());
 
-                if (studentService.addStudentToCourse(studentAtCourse) != null) {
+                if (studentService.addStudentToCourse(studentAtCourse)) {
                     consolePrinter.print(messages.printStudentAddedToCourseSuccess);
                     LOGGER.debug("Student added to course.");
                 }
