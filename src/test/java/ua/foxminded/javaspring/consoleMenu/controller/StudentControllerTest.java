@@ -79,7 +79,6 @@ class StudentControllerTest {
     void deleteStudent_shouldRemovedSuccessfully_whenReceivedStudentExist() {
         when(inputHandler.getStudent()).thenReturn(student);
         when(inputHandler.verifyValidStudent(any(Student.class))).thenReturn(true);
-        when(studentService.deleteStudent(any(Student.class))).thenReturn(true);
 
         studentController.deleteStudent();
 
@@ -176,7 +175,6 @@ class StudentControllerTest {
         when(studentService.getAllCoursesOfStudent(any(Student.class))).thenReturn(studentAtCourses);
         when(inputHandler.verifyValidStudent(any(Student.class))).thenReturn(true);
         when(inputHandler.getEnrollment()).thenReturn(enrollmentId);
-        when(studentService.removeStudentFromCourse(enrollmentId)).thenReturn(true);
 
         studentController.removeStudentFromCourse();
 
