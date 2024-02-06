@@ -8,11 +8,11 @@ import java.util.List;
 
 @Service
 public interface StudentService {
-    Student addNewStudent(Student student);
+    boolean addNewStudent(Student student);
 
     void deleteStudent(Student student);
 
-    StudentAtCourse addStudentToCourse(StudentAtCourse studentAtCourse);
+    boolean addStudentToCourse(StudentAtCourse studentAtCourse);
 
     void removeStudentFromCourse(StudentAtCourse studentAtCourse);
 

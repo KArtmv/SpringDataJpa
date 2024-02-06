@@ -31,9 +31,9 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student addNewStudent(Student student) {
+    public boolean addNewStudent(Student student) {
         if (groupDAO.existsById(student.getGroup().getId())) {
-            return studentDAO.save(student);
+            return studentDAO.save(student).getId() != null;
         } else {
             throw new InvalidIdException("Not found group with received ID: " + student.getGroup().getId());
         }
@@ -45,9 +45,9 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentAtCourse addStudentToCourse(StudentAtCourse studentAtCourse) {
+    public boolean addStudentToCourse(StudentAtCourse studentAtCourse) {
         if (courseDAO.existsById(studentAtCourse.getCourse().getId())) {
-            return studentAtCourseDAO.save(studentAtCourse);
+            return studentAtCourseDAO.save(studentAtCourse).getId() != null;
         } else {
             throw new InvalidIdException("Not found course with received ID: " + studentAtCourse.getCourse().getId());
         }
