@@ -8,6 +8,7 @@ import ua.foxminded.javaspring.consoleMenu.dto.CounterStudentsAtGroup;
 import ua.foxminded.javaspring.consoleMenu.menu.Menu;
 import ua.foxminded.javaspring.consoleMenu.model.Course;
 import ua.foxminded.javaspring.consoleMenu.model.Group;
+import ua.foxminded.javaspring.consoleMenu.model.Student;
 import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
 import ua.foxminded.javaspring.consoleMenu.service.CourseService;
 import ua.foxminded.javaspring.consoleMenu.service.GroupService;
@@ -31,21 +32,21 @@ public class ConsolePrinter {
         this.messages = messages;
     }
 
-    public void viewAllCoursesOfStudent(List<StudentAtCourse> allStudentCourses) {
+    public void viewAllCoursesOfStudent(Student student) {
         print(String.format(messages.printStudentEnrolledInCourses,
-                allStudentCourses.get(0).getStudent().getFirstName(), allStudentCourses.get(0).getStudent().getLastName()));
+                student.getFirstName(), student.getLastName()));
 
-        allStudentCourses.forEach(studentAtCourse -> print(String.format(
+        student.getCourses().forEach(course -> print(String.format(
                 messages.printCourseDetails,
-                studentAtCourse.getId(),
-                studentAtCourse.getCourse().getCourseName(),
-                studentAtCourse.getCourse().getCourseDescription())));
+                course.getId(),
+                course.getCourseName(),
+                course.getCourseDescription())));
     }
 
-    public void viewAllStudentsFromCourse(List<StudentAtCourse> studentsFromCourse) {
-        print(String.format(messages.printStudentsEnrolledInCourse, studentsFromCourse.get(0).getCourse().getCourseName()));
-        studentsFromCourse.forEach(student ->
-                print(String.format("%s %s", student.getStudent().getFirstName(), student.getStudent().getLastName())));
+    public void viewAllStudentsFromCourse(Course course) {
+        print(String.format(messages.printStudentsEnrolledInCourse, course.getCourseName()));
+        course.getStudents().forEach(student ->
+                print(String.format("%s %s", student.getFirstName(), student.getLastName())));
     }
 
     public void viewAmountStudentAtGroup(List<CounterStudentsAtGroup> studentsAtGroups) {
