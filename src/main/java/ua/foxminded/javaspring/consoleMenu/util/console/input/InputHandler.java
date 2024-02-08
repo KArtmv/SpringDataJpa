@@ -16,14 +16,12 @@ public class InputHandler {
     private static final String ALPHABETIC_PATTERN = "\\p{Alpha}+";
     private MyScanner scanner;
     private ConsolePrinter consolePrinter;
-    private StudentService studentService;
     private ApplicationMessages messages;
 
     @Autowired
-    public InputHandler(MyScanner scanner, ConsolePrinter consolePrinter, StudentService studentService, ApplicationMessages messages) {
+    public InputHandler(MyScanner scanner, ConsolePrinter consolePrinter, ApplicationMessages messages) {
         this.scanner = scanner;
         this.consolePrinter = consolePrinter;
-        this.studentService = studentService;
         this.messages = messages;
     }
 
@@ -59,9 +57,8 @@ public class InputHandler {
     }
 
     public boolean verifyValidStudent(Student student) {
-        Student selectedStudent = studentService.getStudent(student);
         consolePrinter.print(String.format(messages.confirmStudentDetails,
-                selectedStudent.getId(), selectedStudent.getFirstName(), selectedStudent.getLastName()));
+                student.getId(), student.getFirstName(), student.getLastName()));
 
         return scanner.getLine().equalsIgnoreCase("yes");
     }
@@ -82,12 +79,6 @@ public class InputHandler {
         Student student = new Student();
         student.setId(scanner.getLong());
         return student;
-    }
-
-    public StudentAtCourse getEnrollment() {
-        StudentAtCourse studentAtCourse = new StudentAtCourse();
-        studentAtCourse.setId(scanner.getLong());
-        return studentAtCourse;
     }
 
     public Integer getRequiredAmountOfStudents() {
