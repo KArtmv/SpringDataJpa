@@ -7,14 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import ua.foxminded.javaspring.consoleMenu.exception.InvalidIdException;
 import ua.foxminded.javaspring.consoleMenu.model.Course;
-import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
 import ua.foxminded.javaspring.consoleMenu.service.CourseService;
 import ua.foxminded.javaspring.consoleMenu.util.ApplicationMessages;
 import ua.foxminded.javaspring.consoleMenu.util.console.input.InputHandler;
 import ua.foxminded.javaspring.consoleMenu.util.console.output.ConsolePrinter;
 
+import javax.transaction.Transactional;
 import java.util.InputMismatchException;
-import java.util.List;
 
 @Controller
 public class CourseController {
@@ -33,18 +32,18 @@ public class CourseController {
         this.inputHandler = inputHandler;
     }
 
+    @Transactional
     public void allStudentsFromCourse() {
         LOGGER.info("Run allStudentsFromCourse method.");
         try {
             consolePrinter.printAllCourses();
             consolePrinter.print(messages.inputCourseIdToViewEnrolledStudents);
-            Course course = inputHandler.getCourse();
+            Course course = courseService.getCourse(inputHandler.getCourse());
             LOGGER.debug("Received course ID: {}", course.getId());
-            List<StudentAtCourse> studentsFromCourse = courseService.allStudentsFromCourse(course);
 
-            if (!CollectionUtils.isEmpty(studentsFromCourse)) {
+            if (!CollectionUtils.isEmpty(course.getStudents())) {
                 LOGGER.debug("The list of students on the course has been successfully compiled");
-                consolePrinter.viewAllStudentsFromCourse(studentsFromCourse);
+                consolePrinter.viewAllStudentsFromCourse(course);
             } else {
                 LOGGER.debug("No found students for the selected course.");
             }
