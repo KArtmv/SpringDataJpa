@@ -1,6 +1,8 @@
 package ua.foxminded.javaspring.consoleMenu.model;
 
+import javax.management.relation.RelationNotFoundException;
 import javax.persistence.*;
+import java.util.*;
 
 @Entity
 @Table(name = "students")
@@ -10,9 +12,40 @@ public class Student extends BaseItem {
     private String firstName;
     @Column(nullable = false, length = 15)
     private String lastName;
+
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
+
+    @ManyToMany
+    @JoinTable(name = "enrollment",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id"))
+    private Set<Course> courses = new HashSet<>();
+
+    public boolean addCourse(Course course){
+        if (courses.add(course)) {
+            return course.getStudents().add(this);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean removeCourse(Course course) {
+        if (course.getStudents().remove(this)) {
+            return courses.remove(course);
+        } else {
+            return false;
+        }
+    }
+
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
+    }
 
     public Student() {
     }
