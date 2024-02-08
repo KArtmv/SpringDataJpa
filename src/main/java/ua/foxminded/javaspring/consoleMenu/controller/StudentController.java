@@ -3,10 +3,12 @@ package ua.foxminded.javaspring.consoleMenu.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import ua.foxminded.javaspring.consoleMenu.exception.InvalidIdException;
+import ua.foxminded.javaspring.consoleMenu.model.Course;
 import ua.foxminded.javaspring.consoleMenu.model.Student;
 import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
 import ua.foxminded.javaspring.consoleMenu.service.StudentService;
@@ -14,6 +16,8 @@ import ua.foxminded.javaspring.consoleMenu.util.ApplicationMessages;
 import ua.foxminded.javaspring.consoleMenu.util.console.input.InputHandler;
 import ua.foxminded.javaspring.consoleMenu.util.console.output.ConsolePrinter;
 
+import org.springframework.transaction.annotation.Transactional;
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.List;
 
@@ -33,6 +37,7 @@ public class StudentController {
         this.messages = messages;
     }
 
+    @Transactional(rollbackFor = {SQLException.class, DataAccessException.class})
     public void addNewStudent() {
         LOGGER.info("Run method: addNewStudent");
         try {
@@ -45,11 +50,12 @@ public class StudentController {
         }
     }
 
+    @Transactional(rollbackFor = {SQLException.class, DataAccessException.class})
     public void deleteStudent() {
         LOGGER.info("Run method: deleteStudent");
         try {
             consolePrinter.print(messages.inputStudentIdToRemove);
-            Student student = inputHandler.getStudent();
+            Student student = studentService.getStudent(inputHandler.getStudent());
             LOGGER.debug("Received student ID: {}", student.getId());
 
             if (inputHandler.verifyValidStudent(student)) {
@@ -62,47 +68,43 @@ public class StudentController {
         }
     }
 
+    @Transactional(rollbackFor = {SQLException.class, DataAccessException.class})
     public void addStudentToCourse() {
         LOGGER.info("Run method: addStudentToCourse");
         try {
             consolePrinter.print(messages.inputStudentIdToAddToCourse);
-            Student student = inputHandler.getStudent();
+            Student student = studentService.getStudent(inputHandler.getStudent());
             LOGGER.debug("Received student ID: {}", student.getId());
 
             if (inputHandler.verifyValidStudent(student)) {
                 consolePrinter.print(messages.inputCourseId);
                 consolePrinter.printAllCourses();
-                StudentAtCourse studentAtCourse = new StudentAtCourse(student, inputHandler.getCourse());
-                LOGGER.debug("Received course Id: {}", studentAtCourse.getCourse().getId());
 
-                if (studentService.addStudentToCourse(studentAtCourse)) {
+                if (studentService.addStudentToCourse(student, inputHandler.getCourse())) {
                     consolePrinter.print(messages.printStudentAddedToCourseSuccess);
                     LOGGER.debug("Student added to course.");
                 }
             }
-        } catch (InvalidIdException | InputMismatchException | DuplicateKeyException e) {
+        } catch (InvalidIdException | InputMismatchException e) {
             LOGGER.error("Failed adding student to course: {}.", e.getMessage());
         }
     }
 
+    @Transactional(rollbackFor = {SQLException.class, DataAccessException.class})
     public void removeStudentFromCourse() {
         LOGGER.info("Run method: removeStudentFromCourse");
         try {
             consolePrinter.print(messages.inputStudentIdToRemoveFromCourse);
             Student student = studentService.getStudent(inputHandler.getStudent());
-            LOGGER.debug("Received student id: {}.", student.getId());
-            List<StudentAtCourse> allStudentCourses = studentService.getAllCoursesOfStudent(student);
 
-            if (!CollectionUtils.isEmpty(allStudentCourses) && inputHandler.verifyValidStudent(student)) {
+            if (inputHandler.verifyValidStudent(student) && !CollectionUtils.isEmpty(student.getCourses())) {
                 consolePrinter.print(messages.chooseEnrollmentIdToRemove);
-                consolePrinter.viewAllCoursesOfStudent(allStudentCourses);
-                StudentAtCourse enrollmentID = inputHandler.getEnrollment();
-                enrollmentID.setStudent(student);
+                consolePrinter.viewAllCoursesOfStudent(student);
 
-                LOGGER.debug("Received enrollment id: {}.", enrollmentID.getId());
-                    studentService.removeStudentFromCourse(enrollmentID);
+                if (studentService.removeStudentFromCourse(student, inputHandler.getCourse())){
                     consolePrinter.print(messages.printStudentRemovedFromCourseSuccess);
                     LOGGER.debug("Student removed from course.");
+                }
             } else {
                 consolePrinter.print(messages.printStudentNotEnrolledInAnyCourse);
                 LOGGER.debug("Student has not any course.");
