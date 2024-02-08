@@ -1,10 +1,8 @@
 package ua.foxminded.javaspring.consoleMenu.service;
 
 import org.springframework.stereotype.Service;
+import ua.foxminded.javaspring.consoleMenu.model.Course;
 import ua.foxminded.javaspring.consoleMenu.model.Student;
-import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
-
-import java.util.List;
 
 @Service
 public interface StudentService {
@@ -12,11 +10,10 @@ public interface StudentService {
 
     void deleteStudent(Student student);
 
-    boolean addStudentToCourse(StudentAtCourse studentAtCourse);
+    boolean addStudentToCourse(Student student, Course course);
 
-    void removeStudentFromCourse(StudentAtCourse studentAtCourse);
+    boolean removeStudentFromCourse(Student student, Course course);
 
     Student getStudent(Student student);
 
-    List<StudentAtCourse> getAllCoursesOfStudent(Student student);
 }
