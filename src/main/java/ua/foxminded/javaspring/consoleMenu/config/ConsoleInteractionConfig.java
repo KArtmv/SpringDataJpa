@@ -36,8 +36,8 @@ public class ConsoleInteractionConfig {
     }
 
     @Bean
-    public InputHandler input(MyScanner scanner, ConsolePrinter consolePrinter, StudentService studentService, ApplicationMessages messages) {
-        return new InputHandler(scanner, consolePrinter, studentService, messages);
+    public InputHandler input(MyScanner scanner, ConsolePrinter consolePrinter, ApplicationMessages messages) {
+        return new InputHandler(scanner, consolePrinter, messages);
     }
 
     @Bean
