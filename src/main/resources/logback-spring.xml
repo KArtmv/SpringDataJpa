@@ -37,7 +37,15 @@
         </encoder>
     </appender>
 
-    <logger name="org.springframework.jdbc.core" level="TRACE" additivity="false">
+    <logger name="org.springframework.transaction" level="TRACE" additivity="false">
+        <appender-ref ref="SQL_STATEMENT_LOG_FILE"/>
+    </logger>
+
+    <logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+        <appender-ref ref="SQL_STATEMENT_LOG_FILE"/>
+    </logger>
+
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
         <appender-ref ref="SQL_STATEMENT_LOG_FILE"/>
     </logger>
 
