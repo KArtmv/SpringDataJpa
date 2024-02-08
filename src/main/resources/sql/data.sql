@@ -227,7 +227,7 @@ values ('Liam', 'Jones', 2),
        ('Caden', 'Miller', 5),
        ('Mia', 'Thomas', 8);
 
-INSERT INTO enrollment (student_id, course_id)
+INSERT INTO student_course (student_id, course_id)
 values (117, 9),
        (154, 2),
        (154, 8),

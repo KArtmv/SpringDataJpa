@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS enrollment;
+DROP TABLE IF EXISTS student_course;
 DROP TABLE IF EXISTS students;
 DROP TABLE IF EXISTS courses;
 DROP TABLE IF EXISTS groups;
@@ -27,7 +27,7 @@ create table courses
     primary key (id)
 );
 
-create table enrollment
+create table student_course
 (
     student_id bigint not null,
     course_id  bigint not null,
