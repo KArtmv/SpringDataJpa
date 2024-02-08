@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ua.foxminded.javaspring.consoleMenu.model.Course;
 import ua.foxminded.javaspring.consoleMenu.model.Group;
 import ua.foxminded.javaspring.consoleMenu.model.Student;
-import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
-import ua.foxminded.javaspring.consoleMenu.service.StudentService;
 import ua.foxminded.javaspring.consoleMenu.util.ApplicationMessages;
 import ua.foxminded.javaspring.consoleMenu.util.MyScanner;
 import ua.foxminded.javaspring.consoleMenu.util.console.output.ConsolePrinter;

@@ -10,7 +10,6 @@ import ua.foxminded.javaspring.consoleMenu.menu.Menu;
 import ua.foxminded.javaspring.consoleMenu.menu.MenuInteraction;
 import ua.foxminded.javaspring.consoleMenu.service.CourseService;
 import ua.foxminded.javaspring.consoleMenu.service.GroupService;
-import ua.foxminded.javaspring.consoleMenu.service.StudentService;
 import ua.foxminded.javaspring.consoleMenu.util.ApplicationMessages;
 import ua.foxminded.javaspring.consoleMenu.util.MyScanner;
 import ua.foxminded.javaspring.consoleMenu.util.ReadResourcesFile;

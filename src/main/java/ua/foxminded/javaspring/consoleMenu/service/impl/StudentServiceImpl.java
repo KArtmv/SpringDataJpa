@@ -3,7 +3,6 @@ package ua.foxminded.javaspring.consoleMenu.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import ua.foxminded.javaspring.consoleMenu.dao.CourseDAO;
 import ua.foxminded.javaspring.consoleMenu.dao.GroupDAO;
@@ -46,31 +45,31 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public boolean addStudentToCourse(Student student, Course course) {
-            Course filalCourse = courseDAO.findById(course.getId()).orElseThrow(() ->
-                    new InvalidIdException("Not found course with received ID: " + course.getId()));
+        Course filalCourse = courseDAO.findById(course.getId()).orElseThrow(() ->
+                new InvalidIdException("Not found course with received ID: " + course.getId()));
 
-            if (student.getCourses().stream().anyMatch(c -> c.equals(filalCourse))) {
-                LOGGER.debug("Student id: {} is already enrolled to course id: {}.", student.getId(), course.getId());
+        if (student.getCourses().stream().anyMatch(c -> c.equals(filalCourse))) {
+            LOGGER.debug("Student id: {} is already enrolled to course id: {}.", student.getId(), course.getId());
+        } else {
+            if (student.addCourse(course)) {
+                return studentDAO.save(student).getId() != null;
             } else {
-                if (student.addCourse(course)) {
-                    return studentDAO.save(student).getId() != null;
-                } else {
-                    LOGGER.error("Add course id: {} to student id: {} is faled.", student.getId(), course.getId());
-                }
+                LOGGER.error("Add course id: {} to student id: {} is faled.", student.getId(), course.getId());
             }
+        }
         return false;
     }
 
 
     @Override
     public boolean removeStudentFromCourse(Student student, Course course) {
-         if (student.removeCourse(courseDAO.findById(course.getId()).orElseThrow(() ->
-                 new InvalidIdException(String.format("Received course id: %s, is not found.", course.getId()))))) {
-                return studentDAO.save(student).getId() != null;
-         } else {
-             LOGGER.info("Course with given id: {} is not relate to student id: {}", course.getId(), student.getId());
-             return false;
-         }
+        if (student.removeCourse(courseDAO.findById(course.getId()).orElseThrow(() ->
+                new InvalidIdException(String.format("Received course id: %s, is not found.", course.getId()))))) {
+            return studentDAO.save(student).getId() != null;
+        } else {
+            LOGGER.info("Course with given id: {} is not relate to student id: {}", course.getId(), student.getId());
+            return false;
+        }
     }
 
     @Override

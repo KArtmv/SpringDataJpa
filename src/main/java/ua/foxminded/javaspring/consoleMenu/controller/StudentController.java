@@ -4,22 +4,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import ua.foxminded.javaspring.consoleMenu.exception.InvalidIdException;
-import ua.foxminded.javaspring.consoleMenu.model.Course;
 import ua.foxminded.javaspring.consoleMenu.model.Student;
-import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
 import ua.foxminded.javaspring.consoleMenu.service.StudentService;
 import ua.foxminded.javaspring.consoleMenu.util.ApplicationMessages;
 import ua.foxminded.javaspring.consoleMenu.util.console.input.InputHandler;
 import ua.foxminded.javaspring.consoleMenu.util.console.output.ConsolePrinter;
 
-import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
-import java.util.List;
 
 @Controller
 public class StudentController {
@@ -101,7 +97,7 @@ public class StudentController {
                 consolePrinter.print(messages.chooseEnrollmentIdToRemove);
                 consolePrinter.viewAllCoursesOfStudent(student);
 
-                if (studentService.removeStudentFromCourse(student, inputHandler.getCourse())){
+                if (studentService.removeStudentFromCourse(student, inputHandler.getCourse())) {
                     consolePrinter.print(messages.printStudentRemovedFromCourseSuccess);
                     LOGGER.debug("Student removed from course.");
                 }

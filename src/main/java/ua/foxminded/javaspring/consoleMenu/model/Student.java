@@ -1,8 +1,8 @@
 package ua.foxminded.javaspring.consoleMenu.model;
 
-import javax.management.relation.RelationNotFoundException;
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "students")
@@ -23,7 +23,7 @@ public class Student extends BaseItem {
             inverseJoinColumns = @JoinColumn(name = "course_id"))
     private Set<Course> courses = new HashSet<>();
 
-    public boolean addCourse(Course course){
+    public boolean addCourse(Course course) {
         if (courses.add(course)) {
             return course.getStudents().add(this);
         } else {

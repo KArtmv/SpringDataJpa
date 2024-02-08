@@ -22,7 +22,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course getCourse(Course course) {
         return courseDAO.findById(course.getId()).orElseThrow(() ->
-                        new InvalidIdException("No founded course by given ID: " + course.getId()));
+                new InvalidIdException("No founded course by given ID: " + course.getId()));
     }
 
     @Override
