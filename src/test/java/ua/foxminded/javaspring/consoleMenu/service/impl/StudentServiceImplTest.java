@@ -9,20 +9,15 @@ import ua.foxminded.javaspring.consoleMenu.ItemInstance;
 import ua.foxminded.javaspring.consoleMenu.TestData;
 import ua.foxminded.javaspring.consoleMenu.dao.CourseDAO;
 import ua.foxminded.javaspring.consoleMenu.dao.GroupDAO;
-import ua.foxminded.javaspring.consoleMenu.dao.StudentAtCourseDAO;
 import ua.foxminded.javaspring.consoleMenu.dao.StudentDAO;
 import ua.foxminded.javaspring.consoleMenu.exception.InvalidIdException;
 import ua.foxminded.javaspring.consoleMenu.model.Course;
 import ua.foxminded.javaspring.consoleMenu.model.Student;
-import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -33,17 +28,14 @@ class StudentServiceImplTest {
     @Mock
     private StudentDAO studentDAO;
     @Mock
-    private StudentAtCourseDAO studentAtCourseDAO;
-    @Mock
     private GroupDAO groupDAO;
     @Mock
     private CourseDAO courseDAO;
 
     private Student student;
     private Course course;
-
     private TestData testData = new TestData();
-    private ItemInstance itemInstance = new ItemInstance();
+    private ItemInstance instance = new ItemInstance();
 
     @InjectMocks
     private StudentServiceImpl studentService;
@@ -51,14 +43,14 @@ class StudentServiceImplTest {
     @BeforeEach
     void init() {
         MockitoAnnotations.openMocks(this);
-        student = new Student(testData.studentFirstName, testData.studentLastName, itemInstance.getGroup());
-        course = itemInstance.getCourse();
+        student = new Student(testData.studentFirstName, testData.studentLastName, instance.getGroup());
+        course = instance.getCourse();
     }
 
     @Test
     void addNewStudent_shouldReturnTrue_whenIsAddedSuccessfully() {
         when(groupDAO.existsById(anyLong())).thenReturn(true);
-        when(studentDAO.save(any(Student.class))).thenReturn(itemInstance.getStudent());
+        when(studentDAO.save(any(Student.class))).thenReturn(instance.getStudent());
 
         assertTrue(studentService.addNewStudent(student));
 
@@ -76,21 +68,7 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void getAllCoursesOfStudent_shouldReturnListOfAllStudentCourses_whenIsCalled() {
-        List<StudentAtCourse> coursesOfStudent = new ArrayList<>();
-        coursesOfStudent.add(new StudentAtCourse(student, new Course(1L)));
-        coursesOfStudent.add(new StudentAtCourse(student, new Course(2L)));
-        coursesOfStudent.add(new StudentAtCourse(student, new Course(3L)));
-
-        when(studentAtCourseDAO.findAllStudentCourses(any(Student.class))).thenReturn(coursesOfStudent);
-
-        assertThat(studentService.getAllCoursesOfStudent(student)).isSameAs(coursesOfStudent);
-
-        verify(studentAtCourseDAO).findAllStudentCourses(student);
-    }
-
-    @Test
-    void deleteStudent_shouldReturnTrue_whenDeletedSuccessfully() {
+    void deleteStudent_doNothing_whenDeletedSuccessfully() {
         studentService.deleteStudent(student);
 
         verify(studentDAO).delete(student);
@@ -98,68 +76,100 @@ class StudentServiceImplTest {
 
     @Test
     void getItemByID_shouldReturnStudent_whenIsExist() {
-        Student student = itemInstance.getStudent();
+        when(studentDAO.findById(anyLong())).thenReturn(Optional.of(instance.getStudent()));
 
-        when(studentDAO.findById(anyLong())).thenReturn(Optional.of(student));
+        assertThat(studentService.getStudent(instance.getStudentId())).isEqualTo(instance.getStudent());
 
-        assertThat(studentService.getStudent(student)).isEqualTo(student);
-
-        verify(studentDAO).findById(student.getId());    }
-
-    @Test
-    void addStudentToCourse_shouldReturnTrue_whenStudentIsAddedAtCourse() {
-        StudentAtCourse studentAtCourse = new StudentAtCourse(student, course);
-
-        when(courseDAO.existsById(anyLong())).thenReturn(true);
-        when(studentAtCourseDAO.save(studentAtCourse)).thenReturn(new StudentAtCourse(1L, student, course));
-
-        assertTrue(studentService.addStudentToCourse(studentAtCourse));
-
-        verify(courseDAO).existsById(course.getId());
-        verify(studentAtCourseDAO).save(studentAtCourse);
+        verify(studentDAO).findById(instance.getStudentId().getId());
     }
 
     @Test
-    void addStudentToCourse_shouldReturnTrue_whenCourseIdIsNotExist() {
-        StudentAtCourse studentAtCourse = new StudentAtCourse(student, course);
+    void addStudentToCourse_shouldReturnTrue_whenStudentIsAddedAtCourse() {
+        Student studentWithCourse = instance.getStudent();
 
-        when(courseDAO.existsById(anyLong())).thenReturn(false);
+        when(courseDAO.findById(anyLong())).thenReturn(Optional.of(course));
+        when(studentDAO.save(any(Student.class))).thenReturn(studentWithCourse);
 
-        assertThrows(InvalidIdException.class, () -> studentService.addStudentToCourse(studentAtCourse));
+        assertTrue(studentService.addStudentToCourse(instance.getStudent(), instance.getCourseId()));
 
-        verify(courseDAO).existsById(course.getId());
+        verify(courseDAO).findById(instance.getCourseId().getId());
+        verify(studentDAO).save(studentWithCourse);
+    }
+
+    @Test
+    void addStudentToCourse_shouldThrowInvalidIdException_whenCourseIdIsNotExist() {
+        when(courseDAO.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(InvalidIdException.class, () -> studentService.addStudentToCourse(instance.getStudent(), instance.getCourseId()));
+
+        verify(courseDAO).findById(instance.getCourseId().getId());
+    }
+
+    @Test
+    void addStudentToCourse_shouldReturnFalse_whenStudentAlreadyEnrollmentToGivenCourse(){
+        Student studentWithCourse = instance.getStudent();
+        studentWithCourse.setCourses(instance.getCourseSet());
+
+        when(courseDAO.findById(anyLong())).thenReturn(Optional.of(course));
+
+        assertFalse(studentService.addStudentToCourse(studentWithCourse, instance.getCourseId()));
+
+        verify(courseDAO).findById(instance.getCourseId().getId());
     }
 
     @Test
     void removeStudentFromCourse_shouldReturnTrue_whenIsRemoved() {
-        StudentAtCourse studentToRemove = new StudentAtCourse(1L, student);
+        Student student1 = instance.getStudent();
+        student1.setCourses(instance.getCourseSet());
+        course.getStudents().add(student1);
 
-        List<StudentAtCourse> studentAtCourses = new ArrayList<>();
-        studentAtCourses.add(new StudentAtCourse(1L, student));
-        studentAtCourses.add(new StudentAtCourse(2L, student));
-        studentAtCourses.add(new StudentAtCourse(3L, student));
+        when(courseDAO.findById(anyLong())).thenReturn(Optional.of(course));
+        when(studentDAO.save(any(Student.class))).thenReturn(student1);
 
-        when(studentAtCourseDAO.findAllStudentCourses(any(Student.class))).thenReturn(studentAtCourses);
+        studentService.removeStudentFromCourse(instance.getStudent(), instance.getCourseId());
 
-        studentService.removeStudentFromCourse(studentToRemove);
-
-        verify(studentAtCourseDAO).findAllStudentCourses(studentToRemove.getStudent());
-        verify(studentAtCourseDAO).delete(studentToRemove);
+        verify(courseDAO).findById(instance.getCourseId().getId());
+        verify(studentDAO).save(student1);
     }
 
     @Test
-    void removeStudentFromCourse_shouldReturnFalse_whenEnrollmentNotExistOrNotRelateToStudent() {
-        StudentAtCourse studentToRemove = new StudentAtCourse(10L, student);
+    void removeStudentFromCourse_shouldThrowInvalidIdException_whenCourseIdNotExist() {
+        when(courseDAO.findById(anyLong())).thenReturn(Optional.empty());
 
-        List<StudentAtCourse> studentAtCourses = new ArrayList<>();
-        studentAtCourses.add(new StudentAtCourse(1L, student));
-        studentAtCourses.add(new StudentAtCourse(2L, student));
-        studentAtCourses.add(new StudentAtCourse(3L, student));
+        assertThrows(InvalidIdException.class, () -> studentService.removeStudentFromCourse(instance.getStudent(), instance.getCourseId()));
 
-        when(studentAtCourseDAO.findAllStudentCourses(any(Student.class))).thenReturn(studentAtCourses);
-
-        assertThrows(InvalidIdException.class, () -> studentService.removeStudentFromCourse(studentToRemove));
-
-        verify(studentAtCourseDAO).findAllStudentCourses(studentToRemove.getStudent());
+        verify(courseDAO).findById(instance.getCourseId().getId());
     }
+
+    @Test
+    void removeStudentFromCourse_shouldReturnFalse_whenCourseNotRelateToStudent(){
+        Student student1 = instance.getStudent();
+        student1.addCourse(instance.getCoursesList().get(1));
+        student1.addCourse(instance.getCoursesList().get(2));
+
+        when(courseDAO.findById(anyLong())).thenReturn(Optional.of(instance.getCourse()));
+
+        assertFalse(studentService.removeStudentFromCourse(student1, instance.getCourseId()));
+
+        verify(courseDAO).findById(instance.getCourseId().getId());
+    }
+
+    @Test
+    void getStudent_shouldReturnStudent_whenIdExist(){
+        when(studentDAO.findById(anyLong())).thenReturn(Optional.of(instance.getStudent()));
+
+        assertThat(studentService.getStudent(instance.getStudentId())).isSameAs(instance.getStudent());
+
+        verify(studentDAO).findById(instance.getStudentId().getId());
+    }
+
+    @Test
+    void getStudent_shouldThrowInvalidIdException_whenIdExist(){
+        when(studentDAO.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(InvalidIdException.class, () -> studentService.getStudent(instance.getStudentId()));
+        verify(studentDAO).findById(instance.getStudentId().getId());
+    }
+
+
 }

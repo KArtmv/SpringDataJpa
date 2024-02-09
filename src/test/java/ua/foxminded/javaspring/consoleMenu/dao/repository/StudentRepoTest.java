@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {StudentDAO.class}))
 @ActiveProfiles("test")
-@Sql({"/sql/student/studentTable.sql", "/sql/student/studentData.sql"})
+@Sql({"/sql/tables.sql", "/sql/student/studentData.sql"})
 class StudentRepoTest {
 
     private final ItemInstance instance = new ItemInstance();
@@ -28,20 +28,14 @@ class StudentRepoTest {
     private StudentDAO studentDAO;
 
     @Test
-    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
-    @Sql(statements = "INSERT INTO students (first_name, last_name, group_id) values ('Ava', 'Rodriguez', 1)")
     void findById_shouldReturnStudent_whenIdIsExist() {
-        Student student = testData.getStudent();
-
-        assertThat(studentDAO.findById(student.getId()).get()).usingRecursiveComparison()
-                .isEqualTo(student);
+        assertThat(studentDAO.findById(instance.getStudentId().getId()).get()).usingRecursiveComparison()
+                .isEqualTo(instance.getStudent());
     }
 
     @Test
     void findById_shouldReturnEmptyOptional_whenIdIsNotExist() {
-        Student student = testData.getStudent();
-
-        assertThat(studentDAO.findById(student.getId())).isNotPresent();
+        assertThat(studentDAO.findById(6L)).isNotPresent();
     }
 
     @Test
@@ -50,8 +44,7 @@ class StudentRepoTest {
             assertThat(studentDAO.save(new Student(testData.studentFirstName, testData.studentLastName, instance.getGroup()))
                     .getId()).isNotNull();
 
-            Student student = testData.getStudent();
-            assertThat(studentDAO.findById(student.getId()).get()).usingRecursiveComparison().isEqualTo(student);
+            assertThat(studentDAO.findById(6L).get()).usingRecursiveComparison().isEqualTo(instance.getExpectedStudent());
         });
     }
 

@@ -5,19 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import ua.foxminded.javaspring.consoleMenu.DataInitializer;
+import ua.foxminded.javaspring.consoleMenu.ItemInstance;
 import ua.foxminded.javaspring.consoleMenu.dao.CourseDAO;
-import ua.foxminded.javaspring.consoleMenu.dao.StudentAtCourseDAO;
 import ua.foxminded.javaspring.consoleMenu.exception.InvalidIdException;
 import ua.foxminded.javaspring.consoleMenu.model.Course;
-import ua.foxminded.javaspring.consoleMenu.model.Student;
-import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -25,54 +20,43 @@ import static org.mockito.Mockito.when;
 
 class CourseServiceImplTest {
 
-    @Mock
-    private StudentAtCourseDAO studentAtCourseDAO;
+    private final ItemInstance instance = new ItemInstance();
+    public Course course;
+
     @Mock
     private CourseDAO courseDAO;
-
-    public static final Course course = new Course(1L);
-
     @InjectMocks
     private CourseServiceImpl courseService;
 
     @BeforeEach
     void init() {
         MockitoAnnotations.openMocks(this);
+        course = instance.getCourse();
     }
 
     @Test
-    void allStudentsFromCourse_shouldReturnListOfStudentsToEnrollmentWithCourse_whenCourseIsExist() {
-        List<StudentAtCourse> expect = new ArrayList<>();
-        expect.add(new StudentAtCourse(new Student("firstName1", "lastName1"), course));
-        expect.add(new StudentAtCourse(new Student("firstName2", "lastName2"), course));
-        expect.add(new StudentAtCourse(new Student("firstName3", "lastName3"), course));
-
+    void getCourse_shouldReturnListOfStudentsToEnrollmentWithCourse_whenCourseIsExist() {
         when(courseDAO.findById(anyLong())).thenReturn(Optional.of(course));
-        when(studentAtCourseDAO.allStudentsFromCourse(course)).thenReturn(expect);
 
-        assertThat(courseService.allStudentsFromCourse(course)).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(expect);
+        assertThat(courseService.getCourse(instance.getCourseId())).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(course);
 
         verify(courseDAO).findById(course.getId());
-        verify(studentAtCourseDAO).allStudentsFromCourse(course);
     }
 
     @Test
-    void allStudentsFromCourse_shouldThrowsException_whenCourseIDIsNotExist() {
+    void getCourse_shouldThrowsException_whenCourseIDIsNotExist() {
         when(courseDAO.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(InvalidIdException.class, () ->
-                courseService.allStudentsFromCourse(course));
+        assertThrows(InvalidIdException.class, () -> courseService.getCourse(instance.getCourseId()));
 
         verify(courseDAO).findById(course.getId());
     }
 
     @Test
     void getAllCourses_shouldReturnListOfCourses_whenRequest() {
-        List<Course> courses = new DataInitializer().coursesListInit();
+        when(courseDAO.findAll()).thenReturn(instance.getCoursesList());
 
-        when(courseDAO.findAll()).thenReturn(courses);
-
-        assertThat(courseService.getAllCourses()).isEqualTo(courses);
+        assertThat(courseService.getAllCourses()).hasSize(3);
 
         verify(courseDAO).findAll();
     }

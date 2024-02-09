@@ -7,12 +7,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
+import ua.foxminded.javaspring.consoleMenu.ItemInstance;
 import ua.foxminded.javaspring.consoleMenu.dto.CounterStudentsAtGroup;
 import ua.foxminded.javaspring.consoleMenu.menu.Menu;
 import ua.foxminded.javaspring.consoleMenu.model.Course;
 import ua.foxminded.javaspring.consoleMenu.model.Group;
 import ua.foxminded.javaspring.consoleMenu.model.Student;
-import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
 import ua.foxminded.javaspring.consoleMenu.service.CourseService;
 import ua.foxminded.javaspring.consoleMenu.service.GroupService;
 import ua.foxminded.javaspring.consoleMenu.util.ApplicationMessages;
@@ -28,8 +28,7 @@ import static org.mockito.Mockito.when;
 
 class ConsolePrinterTest {
 
-    private final Student student = new Student("firstName", "firstName");
-    private final Course course = new Course("courseName", "courseDescription");
+    private final ItemInstance instance = new ItemInstance();
     private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
     @Mock
@@ -55,38 +54,40 @@ class ConsolePrinterTest {
     }
 
     @Test
-    void viewAllCoursesOfStudent_ShouldPrintStudentAndCourseInformation_WhenStudentHasCourses() {
+    void viewAllCoursesOfStudent_shouldPrintStudentAndCourseInformation_WhenStudentHasCourses() {
         ReflectionTestUtils.setField(messages, "printStudentEnrolledInCourses", "Student: %s %s.");
         ReflectionTestUtils.setField(messages, "printCourseDetails", "Course: ID %s, %s. Description: %s.");
-
-        List<StudentAtCourse> studentCourses = Collections.singletonList(new StudentAtCourse(10L, student, course));
-
         System.setOut(new PrintStream(outputStream));
 
-        consolePrinter.viewAllCoursesOfStudent(studentCourses);
+        Student student = instance.getStudent();
+        student.getCourses().add(instance.getCourse());
 
-        String expect = "Student: firstName firstName.\n" + "Course: ID 10, courseName. Description: courseDescription.";
+        consolePrinter.viewAllCoursesOfStudent(student);
+
+        String expect = "Student: Amelia Martinez.\n" +
+                "Course: ID 1, Principles of Economics. Description: Learn about the fundamentals of economics.";
 
         assertThat(outputStream.toString().trim()).isEqualTo(expect);
     }
 
     @Test
-    void viewAllStudentsFromCourse_ShouldPrintCourseAndStudentInformation_WhenStudentsExistInCourse() {
+    void viewAllStudentsFromCourse_shouldPrintCourseAndStudentInformation_WhenStudentsExistInCourse() {
         ReflectionTestUtils.setField(messages, "printStudentsEnrolledInCourse", "Course: %s.");
-
-        List<StudentAtCourse> studentsAtCourse = Collections.singletonList(new StudentAtCourse(student, course));
-
         System.setOut(new PrintStream(outputStream));
 
-        consolePrinter.viewAllStudentsFromCourse(studentsAtCourse);
+        Course course = instance.getCourse();
+        course.getStudents().add(instance.getStudent());
 
-        String expect = "Course: courseName.\n" + "firstName firstName";
+        consolePrinter.viewAllStudentsFromCourse(course);
+
+        String expect = "Course: Principles of Economics.\n" +
+                "Amelia Martinez";
 
         assertThat(outputStream.toString().trim()).isEqualTo(expect);
     }
 
     @Test
-    void viewAmountStudentAtGroup_ShouldPrintCountOfStudentsAndGroupName_WhenCounterStudentsExist() {
+    void viewAmountStudentAtGroup_shouldPrintCountOfStudentsAndGroupName_WhenCounterStudentsExist() {
         ReflectionTestUtils.setField(messages, "printGroupByCountEnrollmentStudents", "Count of student: %s, group: %s.");
 
         List<CounterStudentsAtGroup> counterStudents = Collections.singletonList(new CounterStudentsAtGroup("someGroup", 1L));
@@ -101,7 +102,7 @@ class ConsolePrinterTest {
     }
 
     @Test
-    void printAllCourses_ShouldPrintCourseInformation_WhenCoursesExist() {
+    void printAllCourses_shouldPrintCourseInformation_WhenCoursesExist() {
         ReflectionTestUtils.setField(messages, "printCourseDetails", "ID: %s, Course: %s, description: %s.");
         System.setOut(new PrintStream(outputStream));
 
@@ -118,7 +119,7 @@ class ConsolePrinterTest {
     }
 
     @Test
-    void printAllGroups_ShouldPrintGroupInformation_WhenGroupsExist() {
+    void printAllGroups_shouldPrintGroupInformation_WhenGroupsExist() {
         ReflectionTestUtils.setField(messages, "printAllGroups", "ID: %s, Group: %s.");
         System.setOut(new PrintStream(outputStream));
 
@@ -134,7 +135,7 @@ class ConsolePrinterTest {
     }
 
     @Test
-    void printMenu_ShouldPrintMenuOptions_WhenMenuHasOptions() {
+    void printMenu_shouldPrintMenuOptions_WhenMenuHasOptions() {
         System.setOut(new PrintStream(outputStream));
 
         String expect = "some options";
@@ -148,7 +149,7 @@ class ConsolePrinterTest {
     }
 
     @Test
-    void print_ShouldPrintText_WhenGivenTextToPrint() {
+    void print_shouldPrintText_WhenGivenTextToPrint() {
         System.setOut(new PrintStream(outputStream));
 
         String expect = "some text";

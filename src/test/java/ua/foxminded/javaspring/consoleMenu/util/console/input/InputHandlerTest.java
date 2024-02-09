@@ -8,10 +8,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
+import ua.foxminded.javaspring.consoleMenu.ItemInstance;
 import ua.foxminded.javaspring.consoleMenu.model.Course;
 import ua.foxminded.javaspring.consoleMenu.model.Group;
 import ua.foxminded.javaspring.consoleMenu.model.Student;
-import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
 import ua.foxminded.javaspring.consoleMenu.service.StudentService;
 import ua.foxminded.javaspring.consoleMenu.util.ApplicationMessages;
 import ua.foxminded.javaspring.consoleMenu.util.MyScanner;
@@ -25,12 +25,12 @@ import static org.mockito.Mockito.*;
 
 class InputHandlerTest {
 
+    private final ItemInstance instance = new ItemInstance();
+
     @Mock
     private MyScanner scanner;
     @Mock
     private ConsolePrinter consolePrinter;
-    @Mock
-    private StudentService studentService;
     @Mock
     private ApplicationMessages messages;
 
@@ -80,14 +80,11 @@ class InputHandlerTest {
     @Test
     void verifyValidStudent() {
         ReflectionTestUtils.setField(messages, "confirmStudentDetails", "Student: %s %s!");
-        Student student = new Student("firstName", "lastName");
 
-        when(studentService.getStudent(any(Student.class))).thenReturn(student);
         when(scanner.getLine()).thenReturn("yes");
 
-        assertThat(inputHandler.verifyValidStudent(student)).isTrue();
+        assertThat(inputHandler.verifyValidStudent(instance.getStudent())).isTrue();
 
-        verify(studentService).getStudent(student);
         verify(consolePrinter).print(anyString());
         verify(scanner).getLine();
     }
@@ -115,15 +112,6 @@ class InputHandlerTest {
         when(scanner.getLong()).thenReturn(1L);
 
         assertThat(inputHandler.getStudent()).usingRecursiveComparison().isEqualTo(new Student(1L));
-
-        verify(scanner).getLong();
-    }
-
-    @Test
-    void getStudent_shouldReturnStudentAtCourseObject_whenEnteredValidData() {
-        when(scanner.getLong()).thenReturn(1L);
-
-        assertThat(inputHandler.getEnrollment()).usingRecursiveComparison().isEqualTo(new StudentAtCourse(1L));
 
         verify(scanner).getLong();
     }

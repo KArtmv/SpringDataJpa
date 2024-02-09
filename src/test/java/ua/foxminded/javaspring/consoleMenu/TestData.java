@@ -10,17 +10,17 @@ import java.util.List;
 
 public class TestData {
 
-    public final String courseName = "Introduction to Psychology";
-    public final String courseDescription = "Learn the basics of psychology";
+//    public final String courseName = "Introduction to Psychology";
+//    public final String courseDescription = "Learn the basics of psychology";
 
-    private final Course course = new Course(4L, courseName, courseDescription);
+//    private final Course course = new Course(4L, courseName, courseDescription);
 
-    public final String groupName = "YS-28";
-    private final Group group = new Group(4L, groupName);
+//    public final String groupName = "YS-28";
+//    private final Group group = new Group(4L, groupName);
 
     public final String studentFirstName = "Ava";
     public final String studentLastName = "Rodriguez";
-    private final Student student = new Student(6L, studentFirstName, studentLastName, new ItemInstance().getGroup());
+//    private final Student student = new Student(6L, studentFirstName, studentLastName, new ItemInstance().getGroup());
 
     private List<CounterStudentsAtGroup> studentsAtGroupList = Arrays.asList(
             new CounterStudentsAtGroup("ZF-83", 3L),
@@ -39,16 +39,16 @@ public class TestData {
         return studentsAtGroupList;
     }
 
-    public Course getCourse() {
-        return course;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public Student getStudent() {
-        return student;
-    }
+//    public Course getCourse() {
+//        return course;
+//    }
+//
+//    public Group getGroup() {
+//        return group;
+//    }
+//
+//    public Student getStudent() {
+//        return student;
+//    }
 }
 
