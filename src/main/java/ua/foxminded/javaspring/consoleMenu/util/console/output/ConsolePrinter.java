@@ -13,6 +13,7 @@ import ua.foxminded.javaspring.consoleMenu.service.CourseService;
 import ua.foxminded.javaspring.consoleMenu.service.GroupService;
 import ua.foxminded.javaspring.consoleMenu.util.ApplicationMessages;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class ConsolePrinter {
@@ -35,16 +36,17 @@ public class ConsolePrinter {
         print(String.format(messages.printStudentEnrolledInCourses,
                 student.getFirstName(), student.getLastName()));
 
-        student.getCourses().forEach(course -> print(String.format(
-                messages.printCourseDetails,
-                course.getId(),
-                course.getCourseName(),
-                course.getCourseDescription())));
+        student.getCourses().stream().sorted(Comparator.comparingLong(Course::getId))
+                .forEach(course -> print(String.format(
+                    messages.printCourseDetails,
+                    course.getId(),
+                    course.getCourseName(),
+                    course.getCourseDescription())));
     }
 
     public void viewAllStudentsFromCourse(Course course) {
         print(String.format(messages.printStudentsEnrolledInCourse, course.getCourseName()));
-        course.getStudents().forEach(student ->
+        course.getStudents().stream().sorted(Comparator.comparing(Student::getFirstName)).forEach(student ->
                 print(String.format("%s %s", student.getFirstName(), student.getLastName())));
     }
 
