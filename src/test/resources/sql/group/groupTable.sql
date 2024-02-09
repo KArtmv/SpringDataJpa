@@ -1,7 +1,6 @@
-DROP TABLE IF EXISTS groups;
-
-CREATE TABLE IF NOT EXISTS groups
+create table groups
 (
-    id serial PRIMARY KEY,
-    group_name varchar(25) NOT NULL
-    );
+    id         serial,
+    group_name varchar(25) not null,
+    primary key (id)
+);
