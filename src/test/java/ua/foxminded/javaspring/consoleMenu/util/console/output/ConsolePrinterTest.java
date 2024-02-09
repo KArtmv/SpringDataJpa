@@ -29,6 +29,9 @@ import static org.mockito.Mockito.when;
 class ConsolePrinterTest {
 
     private final ItemInstance instance = new ItemInstance();
+
+//    private final Student student = new Student("firstName", "firstName");
+//    private final Course course = new Course("courseName", "courseDescription");
     private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
     @Mock
@@ -60,12 +63,14 @@ class ConsolePrinterTest {
         System.setOut(new PrintStream(outputStream));
 
         Student student = instance.getStudent();
-        student.getCourses().add(instance.getCourse());
+        student.setCourses(instance.getCourseSet());
 
         consolePrinter.viewAllCoursesOfStudent(student);
 
         String expect = "Student: Amelia Martinez.\n" +
-                "Course: ID 1, Principles of Economics. Description: Learn about the fundamentals of economics.";
+                "Course: ID 1, Principles of Economics. Description: Learn about the fundamentals of economics.\n" +
+                "Course: ID 2, World History: Ancient Civilizations. Description: Explore the history of ancient civilizations.\n" +
+                "Course: ID 3, Creative Writing Workshop. Description: Develop your writing skills in a creative environment.";
 
         assertThat(outputStream.toString().trim()).isEqualTo(expect);
     }
@@ -76,12 +81,16 @@ class ConsolePrinterTest {
         System.setOut(new PrintStream(outputStream));
 
         Course course = instance.getCourse();
-        course.getStudents().add(instance.getStudent());
+        course.setStudents(instance.getStudentsSet());
 
         consolePrinter.viewAllStudentsFromCourse(course);
 
         String expect = "Course: Principles of Economics.\n" +
-                "Amelia Martinez";
+                "Amelia Martinez\n" +
+                "Carter Clark\n" +
+                "Harper Robinson\n" +
+                "Liam Jones\n" +
+                "Lucas Thompson";
 
         assertThat(outputStream.toString().trim()).isEqualTo(expect);
     }
