@@ -48,15 +48,11 @@ public class StudentServiceImpl implements StudentService {
         Course filalCourse = courseDAO.findById(course.getId()).orElseThrow(() ->
                 new InvalidIdException("Not found course with received ID: " + course.getId()));
 
-        if (student.getCourses().stream().anyMatch(c -> c.equals(filalCourse))) {
-            LOGGER.debug("Student id: {} is already enrolled to course id: {}.", student.getId(), course.getId());
-        } else {
-            if (student.addCourse(course)) {
+            if (student.addCourse(filalCourse)) {
                 return studentDAO.save(student).getId() != null;
             } else {
-                LOGGER.error("Add course id: {} to student id: {} is faled.", student.getId(), course.getId());
+                LOGGER.error("Add course id: {} to student id: {} is filed.", student.getId(), course.getId());
             }
-        }
         return false;
     }
 
