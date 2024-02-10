@@ -1,15 +1,17 @@
 package ua.foxminded.javaspring.consoleMenu.menu;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import ua.foxminded.javaspring.consoleMenu.util.ReadResourcesFile;
+import org.springframework.stereotype.Component;
+import ua.foxminded.javaspring.consoleMenu.util.ResourceFileReader;
 
-public class Menu {
+@Component
+public class MenuOptionsProvider {
 
     private static final String menuFilePath = "menu/menu.txt";
-    private ReadResourcesFile readFile;
+    private ResourceFileReader readFile;
 
     @Autowired
-    public Menu(ReadResourcesFile readFile) {
+    public MenuOptionsProvider(ResourceFileReader readFile) {
         this.readFile = readFile;
     }
 

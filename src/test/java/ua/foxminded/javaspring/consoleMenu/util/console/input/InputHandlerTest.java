@@ -14,7 +14,7 @@ import ua.foxminded.javaspring.consoleMenu.model.Student;
 import ua.foxminded.javaspring.consoleMenu.model.StudentAtCourse;
 import ua.foxminded.javaspring.consoleMenu.service.StudentService;
 import ua.foxminded.javaspring.consoleMenu.util.ApplicationMessages;
-import ua.foxminded.javaspring.consoleMenu.util.MyScanner;
+import ua.foxminded.javaspring.consoleMenu.util.MyScannerImpl;
 import ua.foxminded.javaspring.consoleMenu.util.console.output.ConsolePrinter;
 
 import java.util.InputMismatchException;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class InputHandlerTest {
 
     @Mock
-    private MyScanner scanner;
+    private MyScannerImpl scanner;
     @Mock
     private ConsolePrinter consolePrinter;
     @Mock

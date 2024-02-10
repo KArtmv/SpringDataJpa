@@ -1,22 +1,24 @@
 package ua.foxminded.javaspring.consoleMenu.util.console.input;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ua.foxminded.javaspring.consoleMenu.model.Course;
 import ua.foxminded.javaspring.consoleMenu.model.Group;
 import ua.foxminded.javaspring.consoleMenu.model.Student;
 import ua.foxminded.javaspring.consoleMenu.util.ApplicationMessages;
 import ua.foxminded.javaspring.consoleMenu.util.MyScanner;
+import ua.foxminded.javaspring.consoleMenu.util.MyScannerImpl;
 import ua.foxminded.javaspring.consoleMenu.util.console.output.ConsolePrinter;
 
 import java.util.InputMismatchException;
 
+@Component
 public class InputHandler {
     private static final String ALPHABETIC_PATTERN = "\\p{Alpha}+";
     private MyScanner scanner;
     private ConsolePrinter consolePrinter;
     private ApplicationMessages messages;
 
-    @Autowired
     public InputHandler(MyScanner scanner, ConsolePrinter consolePrinter, ApplicationMessages messages) {
         this.scanner = scanner;
         this.consolePrinter = consolePrinter;

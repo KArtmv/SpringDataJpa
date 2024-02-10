@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 import ua.foxminded.javaspring.consoleMenu.dto.CounterStudentsAtGroup;
-import ua.foxminded.javaspring.consoleMenu.menu.Menu;
+import ua.foxminded.javaspring.consoleMenu.menu.MenuOptionsProvider;
 import ua.foxminded.javaspring.consoleMenu.model.Course;
 import ua.foxminded.javaspring.consoleMenu.model.Group;
 import ua.foxminded.javaspring.consoleMenu.model.Student;
@@ -37,7 +37,7 @@ class ConsolePrinterTest {
     @Mock
     private CourseService courseService;
     @Mock
-    private Menu menu;
+    private MenuOptionsProvider menuOptionsProvider;
     @Mock
     private ApplicationMessages messages;
 
@@ -139,12 +139,12 @@ class ConsolePrinterTest {
 
         String expect = "some options";
 
-        when(menu.getOptions()).thenReturn("some options");
+        when(menuOptionsProvider.getOptions()).thenReturn("some options");
 
         consolePrinter.printMenu();
 
         assertThat(outputStream.toString().trim()).isEqualTo(expect);
-        verify(menu).getOptions();
+        verify(menuOptionsProvider).getOptions();
     }
 
     @Test

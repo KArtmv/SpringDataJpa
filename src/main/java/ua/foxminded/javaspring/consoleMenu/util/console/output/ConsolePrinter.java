@@ -3,9 +3,10 @@ package ua.foxminded.javaspring.consoleMenu.util.console.output;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import ua.foxminded.javaspring.consoleMenu.dto.CounterStudentsAtGroup;
-import ua.foxminded.javaspring.consoleMenu.menu.Menu;
+import ua.foxminded.javaspring.consoleMenu.menu.MenuOptionsProvider;
 import ua.foxminded.javaspring.consoleMenu.model.Course;
 import ua.foxminded.javaspring.consoleMenu.model.Group;
 import ua.foxminded.javaspring.consoleMenu.model.Student;
@@ -15,19 +16,20 @@ import ua.foxminded.javaspring.consoleMenu.util.ApplicationMessages;
 
 import java.util.List;
 
+@Component
 public class ConsolePrinter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsolePrinter.class);
     private GroupService groupService;
     private CourseService courseService;
-    private Menu menu;
+    private MenuOptionsProvider menuOptionsProvider;
     private ApplicationMessages messages;
 
     @Autowired
-    public ConsolePrinter(GroupService groupService, CourseService courseService, Menu menu, ApplicationMessages messages) {
+    public ConsolePrinter(GroupService groupService, CourseService courseService, MenuOptionsProvider menuOptionsProvider, ApplicationMessages messages) {
         this.groupService = groupService;
         this.courseService = courseService;
-        this.menu = menu;
+        this.menuOptionsProvider = menuOptionsProvider;
         this.messages = messages;
     }
 
@@ -74,7 +76,7 @@ public class ConsolePrinter {
     }
 
     public void printMenu() {
-        print(menu.getOptions());
+        print(menuOptionsProvider.getOptions());
     }
 
     public void print(String string) {

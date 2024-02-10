@@ -21,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class ReadResourcesFileTest {
+class ResourceFileReaderTest {
     @Mock
     private Resource resource;
     @Mock
     private ResourceLoader resourceLoader;
 
     @InjectMocks
-    private ReadResourcesFile resourcesFile;
+    private ResourceFileReader resourcesFile;
 
     private static final String FILE_PATH = "tables/course.txt";
     private static final String SCRIPT = "CREATE TABLE IF NOT EXISTS courses\n" + "(\n"

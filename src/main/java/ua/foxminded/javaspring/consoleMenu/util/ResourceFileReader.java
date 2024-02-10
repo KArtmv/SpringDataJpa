@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,14 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ReadResourcesFile {
+@Component
+public class ResourceFileReader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReadResourcesFile.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceFileReader.class);
 
     private ResourceLoader resourceLoader;
 
     @Autowired
-    public ReadResourcesFile(ResourceLoader resourceLoader) {
+    public ResourceFileReader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
