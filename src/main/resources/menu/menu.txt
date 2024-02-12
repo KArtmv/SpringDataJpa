@@ -1,0 +1,13 @@
+|================================================================|
+|                      MENU SELECTION                            |
+|================================================================|
+|   Options:                                                     |
+| 1. Find all groups with less or equal students’ number         |
+| 2. Find all students related to the course with the given name |
+| 3. Add a new student                                           |
+| 4. Delete a student by the STUDENT_ID                          |
+| 5. Add a student to the course (from a list)                   |
+| 6. Remove the student from one of their courses                |
+|                                                                |
+| x.  Exit                                                       |
+|================================================================|

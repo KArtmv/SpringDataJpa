@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/serviceLayerDB
+    username: admin
+    password: admin
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:/sql/schema.sql
+      data-locations: classpath:/sql/data.sql
+  jpa:
+    hibernate:
+      ddl-auto: none
